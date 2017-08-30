@@ -22,4 +22,5 @@ export default class ReduxSource extends Source implements Syncable {
     readonly cache: Cache;
     _sync(transform: Transform): Promise<void>;
     protected _applyTransform(transform: Transform): PatchResultData[];
+    private _serializeCache();
 }

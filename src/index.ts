@@ -2,21 +2,24 @@ import Orbit, {
   KeyMap,
   Schema,
   RecordOperation,
-  Source, SourceSettings,
-  Syncable, syncable,
+  Source,
+  SourceSettings,
+  Syncable,
+  syncable,
   Transform,
 } from '@orbit/data'
 import { Cache, CacheSettings, PatchResultData } from '@orbit/store'
 import { Dict } from '@orbit/utils'
 import { Action, AnyAction, Reducer, Dispatch } from 'redux'
 
-
 // Actions
 const SET_STATE: string = '@@orbit-redux-source/SET_STATE'
 const setState = (state): AnyAction => ({ type: SET_STATE, payload: state })
 
 // Reducer
-export interface State { [keys: string]: any }
+export interface State {
+  [keys: string]: any
+}
 
 export const reducer: Reducer<State> = (state = {}, { type, payload }) => {
   switch (type) {
@@ -28,7 +31,9 @@ export const reducer: Reducer<State> = (state = {}, { type, payload }) => {
 }
 
 // Redux Source Store
-export interface ReduxStore { dispatch: Dispatch<any> }
+export interface ReduxStore {
+  dispatch: Dispatch<any>
+}
 export interface StoreSettings extends SourceSettings {
   cacheSettings?: CacheSettings
   store?: ReduxStore
@@ -64,7 +69,7 @@ export default class ReduxSource extends Source implements Syncable {
   }
 
   get cache(): Cache {
-    return this._cache;
+    return this._cache
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -72,8 +77,8 @@ export default class ReduxSource extends Source implements Syncable {
   /////////////////////////////////////////////////////////////////////////////
 
   _sync(transform: Transform): Promise<void> {
-    const state = this._applyTransform(transform)
-    this._store.dispatch(setState(state))
+    this._applyTransform(transform)
+    this._store.dispatch(setState(this._serializeCache()))
     return Orbit.Promise.resolve()
   }
 
@@ -82,5 +87,15 @@ export default class ReduxSource extends Source implements Syncable {
     this._transforms[transform.id] = transform
     this._transformInverses[transform.id] = result.inverse
     return result.data
+  }
+
+  private _serializeCache(): State {
+    return Object.keys(this.schema.models).reduce(
+      (serializedData, type) => ({
+        ...serializedData,
+        [type]: Array.from(this._cache.records(type).values()),
+      }),
+      {},
+    )
   }
 }
