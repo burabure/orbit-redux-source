@@ -1,0 +1,19 @@
+{
+  "name": "orbit-redux-source",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "author": "Nicolas Fernandez <@burabure>",
+  "license": "MIT",
+  "scripts": {
+    "start": "rm -rf dist && tsc --watch"
+  },
+  "dependencies": {
+    "@orbit/data": "^0.15.0",
+    "@orbit/store": "^0.15.0",
+    "typescript": "^2.4.2"
+  },
+  "devDependencies": {
+    "redux": "^3.7.2"
+  }
+}
